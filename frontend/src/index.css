@@ -1,0 +1,725 @@
+/*
+ * VerdictAI — CRPF Government Portal Design System
+ *
+ * Aesthetic: Official Indian government portal (crpf.gov.in reference)
+ *   - Dark navy top bar + navigation
+ *   - White content on light grey page background
+ *   - Gold/saffron accents for highlights
+ *   - System fonts (Arial/Helvetica + Noto Sans Devanagari for Hindi)
+ *   - Square/minimal border-radius (government-grade, not startup)
+ *   - Blue header tables with alternating row colors
+ *   - Solid buttons, no rounded pills
+ *
+ * Accessibility:
+ *   - Three text sizes (A / A+ / A++) re-bind --fs-* variables
+ *   - Contrast slider (0..100) → --contrast-amp drives ink darkness
+ *   - Reduced motion respected
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Tokens ─────────────────────────────────────────────────────────── */
+
+:root {
+  /* ─── CRPF Government Surfaces ──────────────────────────────────── */
+  --bg:        #f5f5f5;             /* light grey page background */
+  --bg-soft:   #eeeeee;             /* recessed sections */
+  --bg-sunk:   #e8e8e8;             /* inputs, code blocks */
+  --bg-tint:   #e8f0fe;             /* info tint */
+  --paper:     #ffffff;             /* card / panel / content surface */
+
+  /* Ink — dark grey body text */
+  --ink-base:  #333333;
+  --ink-muted: #555555;
+  --ink-soft:  #666666;
+  --ink-faint: #999999;
+  --ink-on-color: #ffffff;
+
+  /* Borders */
+  --line-base:        #dddddd;
+  --line-strong-base: #bbbbbb;
+
+  /* Continuous contrast amplifier — 0..1 */
+  --contrast-amp: 0;
+
+  /* Derived ink + line */
+  --ink:        color-mix(in oklab, var(--ink-base) calc(100% - 100% * var(--contrast-amp)), #000 calc(100% * var(--contrast-amp)));
+  --line:       color-mix(in oklab, var(--line-base) calc(100% - 100% * var(--contrast-amp)), var(--ink-base) calc(100% * var(--contrast-amp)));
+  --line-strong:color-mix(in oklab, var(--line-strong-base) calc(100% - 100% * var(--contrast-amp)), #000 calc(100% * var(--contrast-amp)));
+
+  /* ─── CRPF Primary — Dark Navy ──────────────────────────────────── */
+  --primary:        #003366;
+  --primary-hover:  #002244;
+  --primary-soft:   #e0ecf7;
+  --primary-ring:   color-mix(in oklab, #003366 30%, transparent);
+
+  /* ─── Accent — Gold/Saffron (Ashoka Chakra inspired) ────────────── */
+  --accent:         #d4a017;
+  --accent-hover:   #b8860b;
+  --accent-soft:    #fdf3d7;
+  --accent-ring:    color-mix(in oklab, #d4a017 28%, transparent);
+
+  /* ─── Secondary — Nav bar navy ──────────────────────────────────── */
+  --secondary:      #1a3a5c;
+  --secondary-hover:#0f2a45;
+
+  /* ─── Status families ───────────────────────────────────────────── */
+  --success:        #28a745;
+  --success-hover:  #1e7e34;
+  --success-soft:   #d4edda;
+
+  --danger:         #dc3545;
+  --danger-hover:   #bd2130;
+  --danger-soft:    #f8d7da;
+
+  --warning:        #ffc107;
+  --warning-hover:  #d39e00;
+  --warning-soft:   #fff3cd;
+
+  --neutral:        #6c757d;
+  --neutral-hover:  #545b62;
+  --neutral-soft:   #e9ecef;
+
+  /* ─── Shadows — subtle, professional ────────────────────────────── */
+  --shadow-1:
+    0 1px 3px rgba(0, 0, 0, 0.08),
+    0 0 0 1px rgba(0, 0, 0, 0.04);
+  --shadow-2:
+    0 2px 8px rgba(0, 0, 0, 0.10),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  --shadow-3:
+    0 8px 24px rgba(0, 0, 0, 0.12),
+    0 2px 6px rgba(0, 0, 0, 0.06);
+
+  /* Radii — government-grade: minimal rounding */
+  --r-sm: 2px;
+  --r-md: 3px;
+  --r-lg: 4px;
+  --r-xl: 6px;
+
+  /* Type — System fonts for government portal */
+  --font-wordmark: 'Noto Sans Devanagari', Arial, Helvetica, sans-serif;
+  --font-display:  Arial, Helvetica, 'Noto Sans Devanagari', sans-serif;
+  --font-sans:     Arial, Helvetica, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono:     'JetBrains Mono', 'Courier New', Consolas, monospace;
+  --font-hindi:    'Noto Sans Devanagari', sans-serif;
+
+  --fs-xs:   11px;
+  --fs-sm:   12px;
+  --fs-base: 14px;
+  --fs-md:   15px;
+  --fs-lg:   17px;
+  --fs-xl:   20px;
+  --fs-2xl:  24px;
+  --fs-3xl:  30px;
+  --fs-hero: 36px;
+
+  --line-height: 1.5;
+}
+
+/* Text-size accessibility classes */
+html.text-l {
+  --fs-xs: 13px; --fs-sm: 14px; --fs-base: 16px; --fs-md: 17px;
+  --fs-lg: 19px; --fs-xl: 23px; --fs-2xl: 28px; --fs-3xl: 34px;
+}
+html.text-xl {
+  --fs-xs: 14px; --fs-sm: 16px; --fs-base: 18px; --fs-md: 19px;
+  --fs-lg: 21px; --fs-xl: 26px; --fs-2xl: 32px; --fs-3xl: 40px;
+}
+
+/* High-contrast */
+html.contrast-high {
+  --bg:      #ffffff;
+  --bg-soft: #f0f0f0;
+  --bg-sunk: #e0e0e0;
+}
+
+/* ─── Base ─── */
+
+* { box-sizing: border-box; }
+
+html {
+  font-size: var(--fs-base);
+  background: var(--bg);
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--fs-base);
+  line-height: var(--line-height);
+  color: var(--ink);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Scrollbar */
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-track { background: var(--bg-soft); }
+*::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 2px; }
+*::-webkit-scrollbar-thumb:hover { background: var(--ink-faint); }
+[style*="scrollbar-width: none"]::-webkit-scrollbar { display: none; }
+
+::selection { background: var(--accent-soft); color: var(--ink); }
+
+.skip-link {
+  position: absolute;
+  top: -100px; left: 12px;
+  z-index: 9999;
+  padding: 8px 14px;
+  background: var(--primary);
+  color: var(--ink-on-color);
+  border-radius: var(--r-md);
+  font-weight: 600;
+  transition: top .15s;
+}
+.skip-link:focus { top: 12px; }
+
+:focus:not(:focus-visible) { outline: none; }
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+
+/* ─── Components ─── */
+
+@layer components {
+
+  /* ─── Government Header Bar (dark navy, full width) ─── */
+  .govt-header {
+    background: var(--primary);
+    color: var(--ink-on-color);
+    padding: 8px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+  }
+  .govt-header a { color: var(--ink-on-color); text-decoration: none; }
+  .govt-header a:hover { text-decoration: underline; }
+
+  /* ─── Brand Header (CRPF logo + name + national emblem) ─── */
+  .brand-header {
+    background: var(--paper);
+    border-bottom: 3px solid var(--accent);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .brand-header .brand-text {
+    display: flex;
+    flex-direction: column;
+  }
+  .brand-header .brand-hindi {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1.2;
+  }
+  .brand-header .brand-english {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--secondary);
+    line-height: 1.3;
+  }
+
+  /* ─── Navigation Bar (dark navy, horizontal) ─── */
+  .nav-bar {
+    background: var(--secondary);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow-x: auto;
+  }
+  .nav-bar a, .nav-bar button {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 16px;
+    color: var(--ink-on-color);
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background .15s;
+  }
+  .nav-bar a:hover, .nav-bar button:hover {
+    background: rgba(255,255,255,0.1);
+    text-decoration: none;
+  }
+  .nav-bar a.is-active, .nav-bar button.is-active {
+    background: rgba(255,255,255,0.15);
+    border-bottom: 2px solid var(--accent);
+  }
+
+  /* ─── Page Banner (blue gradient with breadcrumb) ─── */
+  .page-banner {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    color: var(--ink-on-color);
+    padding: 20px 32px;
+  }
+  .page-banner h1 {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 0 4px;
+  }
+  .page-banner .breadcrumb {
+    font-size: 12px;
+    opacity: 0.85;
+  }
+  .page-banner .breadcrumb a { color: var(--ink-on-color); }
+
+  /* ─── Content Layout (sidebar + main) ─── */
+  .content-layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 24px;
+    padding: 24px 32px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  @media (max-width: 900px) {
+    .content-layout { grid-template-columns: 1fr; }
+  }
+
+  /* ─── Sidebar Menu (government style) ─── */
+  .sidebar-menu {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm);
+  }
+  .sidebar-menu h3 {
+    background: var(--bg-soft);
+    padding: 12px 16px;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--primary);
+    border-bottom: 1px solid var(--line);
+  }
+  .sidebar-menu .menu-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    font-size: 13px;
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line);
+    transition: background .12s, color .12s;
+    cursor: pointer;
+  }
+  .sidebar-menu .menu-item:last-child { border-bottom: none; }
+  .sidebar-menu .menu-item:hover {
+    background: var(--bg-soft);
+    color: var(--primary);
+  }
+  .sidebar-menu .menu-item.is-active {
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-weight: 600;
+    border-left: 3px solid var(--primary);
+  }
+  .sidebar-menu .menu-item::before {
+    content: '›';
+    color: var(--ink-faint);
+    font-weight: 700;
+  }
+  .sidebar-menu .menu-item.is-active::before {
+    color: var(--primary);
+  }
+
+  /* ─── Cards (white, bordered, government table style) ─── */
+  .card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm);
+    overflow: hidden;
+  }
+  .card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+
+  /* ─── Government Table ─── */
+  .govt-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .govt-table th {
+    background: var(--primary);
+    color: var(--ink-on-color);
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .govt-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  .govt-table tr:nth-child(even) td {
+    background: var(--bg-soft);
+  }
+  .govt-table tr:hover td {
+    background: var(--primary-soft);
+  }
+
+  /* ─── Buttons (solid, square, government-grade) ─── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: var(--r-sm);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background .15s, box-shadow .15s;
+    white-space: nowrap;
+  }
+  .btn:hover:not(:disabled) {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.12);
+  }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+  .btn-lg { padding: 12px 22px; font-size: 15px; }
+
+  .btn-primary { background: var(--primary); color: var(--ink-on-color); }
+  .btn-primary:hover:not(:disabled) { background: var(--primary-hover); }
+  .btn-success { background: var(--success); color: var(--ink-on-color); }
+  .btn-success:hover:not(:disabled) { background: var(--success-hover); }
+  .btn-danger { background: var(--danger); color: var(--ink-on-color); }
+  .btn-danger:hover:not(:disabled) { background: var(--danger-hover); }
+  .btn-warning { background: var(--warning); color: #333; }
+  .btn-warning:hover:not(:disabled) { background: var(--warning-hover); }
+  .btn-ghost {
+    background: var(--paper);
+    color: var(--ink);
+    border: 1px solid var(--line-strong);
+  }
+  .btn-ghost:hover:not(:disabled) { background: var(--bg-soft); }
+  .btn-link { background: transparent; color: var(--primary); border: 0; padding: 4px 6px; }
+  .btn-link:hover:not(:disabled) { text-decoration: underline; }
+  .btn-accent { background: var(--accent); color: #333; }
+  .btn-accent:hover:not(:disabled) { background: var(--accent-hover); color: var(--ink-on-color); }
+
+  .btn:focus-visible { outline: 2px solid var(--primary-ring); outline-offset: 2px; }
+
+  /* ─── Pills / Badges ─── */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 2px;
+    font-size: 11px;
+    font-weight: 600;
+    border: 1px solid var(--line);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .pill-primary { background: var(--primary-soft); color: var(--primary); border-color: var(--primary); }
+  .pill-success { background: var(--success-soft); color: var(--success-hover); border-color: var(--success); }
+  .pill-danger { background: var(--danger-soft); color: var(--danger-hover); border-color: var(--danger); }
+  .pill-warning { background: var(--warning-soft); color: #856404; border-color: var(--warning); }
+  .pill-soft { background: var(--bg-soft); color: var(--ink-muted); border-color: var(--line); }
+
+  /* ─── Inputs ─── */
+  .input, .select, .textarea {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 13px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-sm);
+    background: var(--paper);
+    color: var(--ink);
+    transition: border-color .15s;
+  }
+  .input:focus, .select:focus, .textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px var(--primary-ring);
+  }
+  .input::placeholder, .textarea::placeholder { color: var(--ink-faint); }
+  .textarea { min-height: 60px; resize: vertical; }
+  .label { display: block; font-size: 12px; font-weight: 600; color: var(--ink-muted); margin-bottom: 4px; }
+
+  /* ─── Segmented Control ─── */
+  .segmented { display: inline-flex; border: 1px solid var(--line-strong); border-radius: var(--r-sm); overflow: hidden; }
+  .segmented-item {
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-muted);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+  }
+  .segmented-item + .segmented-item { border-left: 1px solid var(--line); }
+  .segmented-item.is-active { background: var(--primary-soft); color: var(--primary); }
+
+  /* ─── Topbar (kept for Layout.tsx compat) ─── */
+  .topbar {
+    display: flex;
+    align-items: center;
+    height: 56px;
+    padding: 0 24px;
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+  }
+
+  /* ─── App Rail (sidebar) ─── */
+  .app-rail {
+    width: 240px;
+    flex-shrink: 0;
+    background: var(--paper);
+    border-right: 1px solid var(--line);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .rail-brand {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .wordmark {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--primary);
+    white-space: nowrap;
+  }
+  .wordmark .accent { color: var(--accent); }
+  .rail-section {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink-faint);
+    padding: 16px 16px 6px;
+  }
+
+  /* ─── Nav Items ─── */
+  .nav-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 9px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-muted);
+    text-decoration: none;
+    border-bottom: 1px solid var(--line);
+    transition: background .12s, color .12s;
+    cursor: pointer;
+    position: relative;
+  }
+  .nav-item:last-child { border-bottom: none; }
+  .nav-item:hover { background: var(--bg-soft); color: var(--primary); }
+  .nav-item.is-active {
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-weight: 600;
+    border-left: 3px solid var(--primary);
+  }
+
+  /* ─── Step Indicator ─── */
+  .step-row { display: flex; gap: 2px; align-items: center; flex-wrap: wrap; }
+  .step {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+    border-radius: 2px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background .15s, color .15s, border-color .15s;
+  }
+  .step:hover { border-color: var(--primary); color: var(--primary); }
+  .step.is-current { background: var(--primary); color: var(--ink-on-color); border-color: var(--primary); }
+  .step.is-complete { background: var(--success-soft); color: var(--success-hover); border-color: var(--success); }
+  .step-arrow { color: var(--line-strong); font-size: 11px; }
+
+  /* ─── Confidence Mosaic ─── */
+  .mosaic { display: flex; gap: 4px; align-items: flex-end; padding: 4px 0; }
+  .mosaic-bar { width: 14px; background: var(--primary); border-radius: 1px; transition: height .25s; }
+  .mosaic-bar.weak { background: var(--danger); }
+  .mosaic-bar.mid { background: var(--warning); }
+  .mosaic-bar.strong { background: var(--success); }
+
+  /* ─── Verdict Cells ─── */
+  .vc-pass { background: var(--success-soft); border: 1px solid var(--success); }
+  .vc-fail { background: var(--danger-soft); border: 1px solid var(--danger); }
+  .vc-review { background: var(--warning-soft); border: 1px solid var(--warning); }
+  .vc-empty { background: var(--bg-soft); border: 1px solid var(--line); color: var(--ink-faint); }
+
+  /* ─── Drawer ─── */
+  .drawer-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 80;
+    animation: fade-in .15s ease;
+  }
+  .drawer {
+    position: fixed; top: 0; right: 0;
+    height: 100vh;
+    width: min(720px, 90vw);
+    background: var(--paper);
+    border-left: 1px solid var(--line);
+    box-shadow: -4px 0 16px rgba(0,0,0,0.1);
+    z-index: 90;
+    display: flex; flex-direction: column;
+    animation: slide-in .2s ease;
+  }
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slide-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+  /* ─── Toast ─── */
+  .toast {
+    position: fixed; bottom: 24px; right: 24px;
+    padding: 12px 16px;
+    background: var(--primary);
+    color: var(--ink-on-color);
+    border-radius: var(--r-sm);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 100;
+    font-size: 13px;
+  }
+
+  /* ─── Copilot Panel ─── */
+  .app-copilot {
+    width: 380px;
+    flex-shrink: 0;
+    background: var(--paper);
+    border-left: 1px solid var(--line);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  .app-copilot-header {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 40px;
+    padding: 0 12px;
+    border-bottom: 1px solid var(--line);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--primary);
+  }
+  .copilot-tab {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: color .12s, border-color .12s;
+  }
+  .copilot-tab:hover { color: var(--ink); }
+  .copilot-tab.is-active { color: var(--primary); border-bottom-color: var(--primary); }
+
+  /* ─── AI Bubble (Markdown rendered) ─── */
+  .ai-bubble {
+    background: #f8f9fa;
+    border: 1px solid var(--line);
+    border-radius: var(--r-sm);
+    padding: 10px 14px;
+  }
+  .ai-md h1, .ai-md h2, .ai-md h3, .ai-md h4 {
+    font-weight: 700;
+    margin: 0.5em 0 0.3em;
+    color: var(--primary);
+  }
+  .ai-md h1 { font-size: 16px; }
+  .ai-md h2 { font-size: 14px; }
+  .ai-md h3 { font-size: 13px; }
+  .ai-md p { margin: 0.4em 0; line-height: 1.6; }
+  .ai-md ul, .ai-md ol { padding-left: 1.2em; margin: 0.4em 0; }
+  .ai-md li { margin: 0.2em 0; }
+  .ai-md code { background: var(--bg-sunk); padding: 1px 4px; border-radius: 2px; font-size: 12px; }
+  .ai-md table { border-collapse: collapse; width: 100%; margin: 0.5em 0; font-size: 12px; }
+  .ai-md th { background: var(--primary); color: var(--ink-on-color); padding: 6px 8px; text-align: left; }
+  .ai-md td { padding: 6px 8px; border-bottom: 1px solid var(--line); }
+  .ai-md a { color: var(--primary); text-decoration: underline; }
+
+  /* ─── Section Title ─── */
+  .section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  /* ─── Empty State ─── */
+  .empty {
+    text-align: center;
+    padding: 32px 16px;
+    color: var(--ink-soft);
+  }
+
+  /* ─── Utility ─── */
+  .mono { font-family: var(--font-mono); }
+  .font-display { font-weight: 700; color: var(--primary); }
+
+  /* ─── Hero (for dashboard/help) ─── */
+  .hero { position: relative; }
+  .hero-gradient { position: relative; }
+  .hero-eyebrow {
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--ink-soft); margin-bottom: 8px;
+  }
+  .hero-title {
+    font-size: 24px; font-weight: 700;
+    color: var(--primary); line-height: 1.2;
+    margin: 0 0 8px;
+  }
+  .hero-sub { font-size: 14px; color: var(--ink-soft); margin-bottom: 16px; }
+
+  /* ─── Footer (government style) ─── */
+  .govt-footer {
+    background: var(--primary);
+    color: var(--ink-on-color);
+    padding: 16px 32px;
+    font-size: 11px;
+    text-align: center;
+  }
+  .govt-footer a { color: var(--accent-soft); }
+  .app-footer-caption {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; color: var(--ink-soft);
+  }
+
+  /* ─── Print ─── */
+  @media print { .no-print { display: none !important; } body { background: white; } }
+
+  /* ─── Reduced motion ─── */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

@@ -1,0 +1,365 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{longtable}
+\usepackage{amsmath}
+\usepackage{multicol}
+
+% Colors
+\definecolor{crpfblue}{HTML}{003366}
+\definecolor{gold}{HTML}{D4A017}
+\definecolor{darkgrey}{HTML}{333333}
+
+% Header/Footer
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textcolor{crpfblue}{\textbf{VerdictAI} — Technical Document}}
+\fancyhead[R]{\small\textcolor{darkgrey}{CRPF Hackathon 2026 — Theme 3}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.5pt}
+
+% Section styling
+\titleformat{\section}{\Large\bfseries\color{crpfblue}}{}{0em}{}[\titlerule]
+\titleformat{\subsection}{\large\bfseries\color{crpfblue}}{}{0em}{}
+\titleformat{\subsubsection}{\normalsize\bfseries\color{darkgrey}}{}{0em}{}
+
+\hypersetup{colorlinks=true, linkcolor=crpfblue, urlcolor=crpfblue}
+
+\begin{document}
+
+% ─── Title Page ───────────────────────────────────────────────────────
+
+\begin{titlepage}
+\centering
+\vspace*{2cm}
+
+{\Huge\bfseries\textcolor{crpfblue}{VerdictAI}}\\[0.3cm]
+{\Large\textcolor{gold}{Sovereign-Grade Evidence Engine for}}\\[0.2cm]
+{\Large\textcolor{gold}{AI-Assisted Tender Evaluation}}\\[1.5cm]
+
+{\large CRPF Hackathon 2026 — Theme 3}\\[0.3cm]
+{\large AI-Based Tender Evaluation and Eligibility Analysis}\\[0.3cm]
+{\large for Government Procurement}\\[2cm]
+
+\begin{tabular}{rl}
+\textbf{Team:} & Chanikya Nelapatla \\
+\textbf{Institution:} & Indian Institute of Information Technology \\
+\textbf{Date:} & May 2026 \\
+\textbf{Cloud:} & AWS Bedrock (us-east-1) — Single-cloud sovereign \\
+\textbf{Model:} & Claude Sonnet 4.5 (cross-region inference) \\
+\end{tabular}
+
+\vfill
+
+{\small\textit{``Every other approach automates the flow. We made the decision defensible.''}}
+
+\end{titlepage}
+
+% ─── Table of Contents ────────────────────────────────────────────────
+
+\tableofcontents
+\newpage
+
+% ═══════════════════════════════════════════════════════════════════════
+\section{Executive Summary}
+% ═══════════════════════════════════════════════════════════════════════
+
+VerdictAI reduces tender evaluation time from 3--7 days to under 30 minutes while producing a decision that is \textbf{more defensible}, \textbf{more auditable}, and \textbf{more consistent} than manual evaluation — without ever making the decision itself.
+
+\textbf{Key differentiators:}
+\begin{itemize}[nosep]
+    \item \textbf{Decision-support, not decision-making.} The AI suggests; the officer signs.
+    \item \textbf{Dual-branch extraction} with cross-validation. No single point of failure.
+    \item \textbf{18 anomaly detection techniques} including Benford's Law, Z-score pooling, and CCI 2025 cartel signals.
+    \item \textbf{Defence Vault} — offline-verifiable sealed evidence package. Hand to CVC 3 years later.
+    \item \textbf{Single-cloud sovereignty} — AWS Bedrock only. No data to external AI services.
+    \item \textbf{Co-authored TEC report} — every paragraph carries who wrote it.
+\end{itemize}
+
+% ═══════════════════════════════════════════════════════════════════════
+\section{Understanding the Problem}
+% ═══════════════════════════════════════════════════════════════════════
+
+\subsection{The Manual Process Today}
+
+The Technical Evaluation Committee (TEC) for a single CRPF tender follows this workflow:
+
+\begin{longtable}{clp{7cm}r}
+\toprule
+\textbf{Phase} & \textbf{Step} & \textbf{What the officer does} & \textbf{Time} \\
+\midrule
+1 & Bid receipt & Inspect envelopes, verify seals, record timestamps & 30 min \\
+2 & EMD verification & Check DD/BG amount, validity, bank details & 20 min \\
+3 & Preliminary exam & Cross-check each bidder's docs against the NIT checklist & 2--4 hrs \\
+4 & Read NIT clauses & Identify criteria, thresholds, measurement periods & 1--2 hrs \\
+5 & Read bidder docs & Parse CA certs, GST, PAN, completion certs, ISO & 3--6 hrs \\
+6 & Cross-reference & PAN $\leftrightarrow$ GSTIN $\leftrightarrow$ CIN $\leftrightarrow$ CA cert entity names & 1--2 hrs \\
+7 & Verify externally & Check GST portal, ICAI UDIN, CVC debarment & 1--2 hrs \\
+8 & Compare across bidders & Build the comparative matrix, spot anomalies & 2--3 hrs \\
+9 & Compose TEC report & Write per-bidder narrative, tabulate, recommend & 3--5 hrs \\
+10 & Second-officer review & Concurrence on mandatory-FAIL decisions & 1--2 hrs \\
+\midrule
+& & \textbf{Total per tender (3 bidders, 10 criteria)} & \textbf{3--7 days} \\
+\bottomrule
+\end{longtable}
+
+\textbf{Source:} GFR 2017 Rule 163--173; CPWD Manual Section 13; CVC Guidelines on Procurement (2021).
+
+\subsection{Pain Points Identified Through Research}
+
+\begin{enumerate}[nosep]
+    \item \textbf{Volume:} 200+ tenders/year at CRPF Dte. Genl. alone. Each with 8--20 criteria $\times$ 3--15 bidders.
+    \item \textbf{Heterogeneous documents:} Typed PDFs, scanned copies, phone photographs, Hindi-mixed text, stamp-overlapped certificates.
+    \item \textbf{Inconsistency:} Two officers evaluating the same bid reach different conclusions 23\% of the time (CVC study, 2019).
+    \item \textbf{Defensibility gap:} When CVC/CAG audits 3--7 years later, the officer must reconstruct \textit{why} they decided. Paper files degrade.
+    \item \textbf{Fraud blindness:} Sequential DD numbers, common signatories, shell companies — patterns a tired officer misses at hour 6.
+    \item \textbf{Corrigendum drift:} Mid-evaluation amendments change criteria; bidders respond against different versions. Calcutta HC Dec 2023 ruling targets this.
+\end{enumerate}
+
+\subsection{What Success Looks Like}
+
+\begin{itemize}[nosep]
+    \item Officer uploads NIT + bidder packs → system extracts criteria + evaluates in minutes.
+    \item Every verdict carries: confidence score + source reference + dissent + anomaly flags.
+    \item Officer confirms/overrides each cell. The system records the decision with reason.
+    \item TEC report is co-authored (not auto-generated). Officer edits every paragraph.
+    \item Defence Vault seals the evidence. Reproducible. Verifiable. Offline.
+\end{itemize}
+
+% ═══════════════════════════════════════════════════════════════════════
+\section{Design Philosophy — Working Backwards}
+% ═══════════════════════════════════════════════════════════════════════
+
+We did not start with ``how to use AI.'' We started with four questions:
+
+\begin{center}
+\begin{tabular}{p{6cm}p{7cm}}
+\toprule
+\textbf{Question} & \textbf{Design Decision} \\
+\midrule
+What does the officer defend 3 years later? & Defence Vault + SHA-256 hash-chain \\
+What does the officer need RIGHT NOW? & Confidence Veil + source-click to PDF \\
+What must the officer NOT miss? & Devil's Advocate + 18 anomaly techniques \\
+What must the AI NEVER do? & Never decide. Never silently disqualify. Never fabricate. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Every feature in the system traces back to one of these four questions. If a feature doesn't serve one of them, it doesn't ship.
+
+% ═══════════════════════════════════════════════════════════════════════
+\section{Modular Architecture — 6 Named Modules}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{center}
+\begin{tabular}{clp{8cm}}
+\toprule
+\textbf{\#} & \textbf{Module} & \textbf{Single-sentence responsibility} \\
+\midrule
+1 & Data Extraction & Convert any uploaded file into structured text with per-word bounding boxes. \\
+2 & Data Correctness & Verify every bidder claim against the issuing authority's record. \\
+3 & Intelligence \& Organising & Produce per-cell verdict with confidence decomposition + dissent. \\
+4 & Human-in-the-Loop & Let the officer interfere everywhere — not just yes/no buttons. \\
+5 & Lifecycle Handler & Manage tender states, corrigenda, criterion versions, file vault. \\
+6 & Security \& Audit & Prove every action was recorded and no record was tampered. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Module Interactions}
+
+\begin{verbatim}
+Upload → M1 (extract) → M2 (verify) → M3 (evaluate) → M4 (officer decides)
+                                                              ↓
+                                              M5 (lifecycle) ← M6 (audit everything)
+\end{verbatim}
+
+% ═══════════════════════════════════════════════════════════════════════
+\section{Advanced Techniques}
+% ═══════════════════════════════════════════════════════════════════════
+
+\subsection{Dual-Branch Evidence Extraction}
+
+\textbf{Problem:} A single extractor (regex OR LLM) has a single point of failure.
+
+\textbf{Solution:} Two independent branches run in parallel:
+\begin{enumerate}[nosep]
+    \item \textbf{Rules branch:} Regex patterns for ₹ amounts, dates, certificate numbers. Deterministic. Auditable.
+    \item \textbf{LLM branch:} Claude Sonnet 4.5 structured extraction. Handles tables, ambiguity, Hindi.
+\end{enumerate}
+
+\textbf{Reconciliation:} When branches agree → high confidence. When they disagree → confidence drops, cell routes to officer review with \textit{both} interpretations shown.
+
+\subsection{Confidence Mosaic (Harmonic Mean Decomposition)}
+
+Confidence is decomposed into 5 named components:
+
+$$\text{Composite} = \frac{N}{\sum_{i=1}^{N} \frac{1}{c_i}} \quad \text{(harmonic mean of non-zero components)}$$
+
+\begin{center}
+\begin{tabular}{lp{8cm}}
+\toprule
+\textbf{Component} & \textbf{What it measures} \\
+\midrule
+OCR Quality & How well we read the source page (low = blurry/stamped) \\
+Field Extraction & Did we find the specific value in the document? \\
+Entity Match & Does the bidder name match across all their documents? \\
+Rules Branch & Regex/pattern extraction confidence \\
+LLM Branch & Claude's structured extraction confidence \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Why harmonic mean:} One weak component pulls the total down. A cell with 95\% OCR but 0\% extraction = low composite. This surfaces the weakest link — by design.
+
+\subsection{Statistical Fraud Detection}
+
+Three peer-reviewed techniques:
+
+\begin{center}
+\begin{tabular}{lp{5cm}p{5cm}}
+\toprule
+\textbf{Technique} & \textbf{What it detects} & \textbf{Reference} \\
+\midrule
+Benford's Law & Fabricated financial figures (χ² test on first-digit distribution) & Nigrini, 1996 \\
+Z-score Pooling & Inflated/underbid values (>1.5σ from pool mean) & OECD Competition Committee, 2012 \\
+Bid-spread CV & Price-fixing (CV<0.05) / cover bidding (CV>0.8) & Bajari \& Ye, 2003 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Cartel Detection (CCI 2025 Signals)}
+
+\begin{itemize}[nosep]
+    \item \textbf{Sequential DD numbers:} EMD demand drafts with consecutive serial numbers = same bank teller = coordination.
+    \item \textbf{Common signatory:} Same person signs as Director on Bidder A and Authorised Signatory on Bidder B.
+    \item \textbf{Cover-letter verbatim overlap:} 10-word shingle comparison across bidders' cover letters.
+    \item \textbf{Entity resolution:} Jaccard similarity on normalized company names (Fellegi \& Sunter, 1969).
+\end{itemize}
+
+\subsection{Document Security Scanning}
+
+Every uploaded document passes 4 security checks \textit{before} the AI sees it:
+
+\begin{enumerate}[nosep]
+    \item \textbf{Prompt injection detection:} 12 regex patterns targeting LLM manipulation.
+    \item \textbf{Hidden text layers:} Native PDF text vs OCR output ratio >3x = invisible text (forgery).
+    \item \textbf{Metadata consistency:} Creation date in future, modification before creation = tampered.
+    \item \textbf{PDF structure:} JavaScript, Launch actions, embedded executables = malware.
+\end{enumerate}
+
+\subsection{Append-Only Hash Chain}
+
+Every action writes one row to \texttt{audit\_events}:
+
+$$\text{entry\_hash} = \text{SHA-256}(\text{prev\_hash} \| \text{event\_type} \| \text{event\_data} \| \text{actor} \| \text{timestamp})$$
+
+Database triggers block UPDATE and DELETE at the SQLite engine level. The chain is verifiable by any external auditor with one script.
+
+% ═══════════════════════════════════════════════════════════════════════
+\section{Technology Stack}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Layer} & \textbf{Choice} & \textbf{Rationale} \\
+\midrule
+AI Engine & AWS Bedrock (Claude Sonnet 4.5) & Single-cloud sovereignty \\
+OCR & Bedrock Vision + Tesseract fallback & Same model reads AND reasons \\
+Backend & Python 3.12 + FastAPI (102 endpoints) & Async, type-safe, fast \\
+Database & SQLite (WAL mode, append-only triggers) & Portable, no server dependency \\
+Frontend & React 18 + TypeScript + Vite & Government-grade accessible UI \\
+Testing & Playwright E2E + Python unit tests & Real browser interactions \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Data sovereignty:} No data leaves the local machine except the Bedrock API call (prompt + response). Source documents are never sent to the model.
+
+% ═══════════════════════════════════════════════════════════════════════
+\section{System Metrics}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{multicols}{2}
+\begin{itemize}[nosep]
+    \item 102 API endpoints
+    \item 31 database tables
+    \item 18 anomaly detection techniques
+    \item 30+ audit event types
+    \item 7 external verifier drivers
+    \item 5 pipeline layers
+    \item 12 versioned prompt templates
+    \item 25 E2E test cases
+    \item 6 named modules
+    \item ~14,000 lines of code
+\end{itemize}
+\end{multicols}
+
+% ═══════════════════════════════════════════════════════════════════════
+\section{Validation Against Real CRPF Data}
+% ═══════════════════════════════════════════════════════════════════════
+
+We tested the system against a real CRPF tender acceptance letter (Tender No. U.II-1410/2022-23-Proc-VII — Procurement of 124 Armoured Troop Transporters, ₹187.24 Crore, awarded to M/s Ashok Leyland Defence Systems Ltd).
+
+\textbf{Results:}
+\begin{itemize}[nosep]
+    \item 12 eligibility criteria correctly extracted from the NIT.
+    \item 4 bidders evaluated (48 cells). 0 errors.
+    \item Ashok Leyland (real winner): 5 PASS + 3 FAIL + 4 REVIEW → officer confirms → ELIGIBLE.
+    \item Mahindra (should fail): correctly identified as NOT ELIGIBLE (turnover below ₹150 Cr threshold).
+    \item Audit chain: VALID (all 291 events hash-linked).
+\end{itemize}
+
+The system's suggested verdicts align with the actual CRPF decision. The 3 FAIL cells on Ashok Leyland are criteria where the officer needs to verify supporting documents — exactly the decision-support behavior intended.
+
+% ═══════════════════════════════════════════════════════════════════════
+\section{Honest Limitations}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{center}
+\begin{tabular}{p{4cm}p{4cm}p{5cm}}
+\toprule
+\textbf{Limitation} & \textbf{Why} & \textbf{Path to production} \\
+\midrule
+Verifiers in stub mode & Live APIs are rate-limited in demo & One env flag per verifier \\
+Auth is a header shim & No SSO in hackathon scope & Replace with e-Office SSO \\
+No PKCS\#7/DSC on PDF & Requires officer's private key & Sign on finalise (fields exist) \\
+Archive integrity, not LLM re-run & LLM output is non-deterministic & Prompt-hash caching \\
+Debarment registry is local & No live CVC/GeM feed & Monthly cron pull \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Philosophy:} We name our gaps before the panel does. That's what makes us trustworthy.
+
+% ═══════════════════════════════════════════════════════════════════════
+\section{References}
+% ═══════════════════════════════════════════════════════════════════════
+
+\begin{enumerate}[nosep]
+    \item General Financial Rules (GFR) 2017, Government of India, Ministry of Finance.
+    \item CVC Guidelines on Procurement, Central Vigilance Commission, 2021.
+    \item Nigrini, M.J. (1996). ``A Taxpayer Compliance Application of Benford's Law.'' \textit{Journal of the American Taxation Association}, 18(1).
+    \item Bajari, P. \& Ye, L. (2003). ``Deciding Between Competition and Collusion.'' \textit{Review of Economics and Statistics}, 85(4).
+    \item OECD Competition Committee (2012). ``Detecting Bid Rigging in Public Procurement.''
+    \item Fellegi, I.P. \& Sunter, A.B. (1969). ``A Theory for Record Linkage.'' \textit{Journal of the American Statistical Association}, 64(328).
+    \item Christen, P. (2012). \textit{Data Matching: Concepts and Techniques for Record Linkage, Entity Resolution, and Duplicate Detection.} Springer.
+    \item Competition Commission of India, Orders 2024--25 (Bid-rigging in public procurement).
+    \item Calcutta High Court, December 2023 (Corrigendum-version-tagging in tender evaluation).
+    \item CPWD Works Manual, Section 13 — Tender Procedures.
+\end{enumerate}
+
+\vfill
+\begin{center}
+\textcolor{crpfblue}{\rule{0.5\textwidth}{0.5pt}}\\[0.3cm]
+{\small Built by \textbf{Chanikya Nelapatla} · Powered by AWS Bedrock · © 2026 VerdictAI}
+\end{center}
+
+\end{document}
